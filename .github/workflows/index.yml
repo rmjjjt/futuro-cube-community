@@ -1,0 +1,39 @@
+name: Check scripts and rebuild the index
+
+on:
+  pull_request:
+    paths: ["scripts/**"]
+  push:
+    branches: [main]
+    paths: ["scripts/**", "tools/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  check:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Compile and run every script in the simulator
+        run: node tools/build_index.mjs --check
+
+  index:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Rebuild index.json and previews.json
+        run: node tools/build_index.mjs || echo "::warning::Some scripts were skipped; see the log"
+      - name: Commit the index if it changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.json previews.json
+          git diff --cached --quiet || (git commit -m "Rebuild the index" && git push)
