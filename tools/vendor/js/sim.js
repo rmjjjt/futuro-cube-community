@@ -19,16 +19,6 @@ const TAP_GENERIC = 5, SHAKING = 8, TAP_DOUBLE = 15;
 // 3x3 digits for DrawDigit, rows top to bottom
 const FONT = ["111101111", "010010010", "110010011", "111011111", "101111001", "011010110", "100111111", "111001001", "011111110", "111111001"];
 
-let enginePromise;
-function engine() {
-  enginePromise ??= (async () => {
-    let target = null;   // the running CubeSim
-    const M = await createAmxSim({ onNative: (i, p) => target.native(i, p) });
-    M.use = (sim) => (target = sim);
-    return M;
-  })();
-  return enginePromise;
-}
 
 export class CubeSim extends EventTarget {
   constructor() {
@@ -62,13 +52,13 @@ export class CubeSim extends EventTarget {
   }
 
   async load(amx) {
-    this.M = await engine();
+    // each simulator has its own abstract machine, so several can run side by side
+    this.M ??= await createAmxSim({ onNative: (i, p) => this.native(i, p) });
     this.amx = amx;
   }
 
   start() {
     const M = this.M;
-    M.use(this);
     this.reset();
     const p = M._malloc(this.amx.length);
     M.HEAPU8.set(this.amx, p);
@@ -105,7 +95,6 @@ export class CubeSim extends EventTarget {
 
   runScript() {
     const M = this.M;
-    M.use(this);
     this.nativeCalls = 0;
     this.error = null;
     let err;
