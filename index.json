@@ -6,6 +6,13 @@
    "author": "Futuro Cube Suite",
    "about": "A firefly flits around the cube. Tilt so your cursor (the up-facing square, blue) is under it and tap to catch it. Catch ten as fast as you can; it gets jumpier as you go.",
    "path": "scripts/firefly.p"
+  },
+  {
+   "name": "my_script_1",
+   "title": "My script 1",
+   "author": "rhymes",
+   "about": "New script. Tilt the cube and the up-facing square lights up.",
+   "path": "scripts/my_script_1.p"
   }
  ]
 }
