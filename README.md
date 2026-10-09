@@ -38,7 +38,7 @@ By sharing, you agree to license your script under the MIT licence (see [LICENSE
 ## Featured
 
 `featured.json` lists the maintainer's picks, in order. They show first in the gallery
-with a **Featured** badge. Pull requests that change it won't be merged; just ask.
+with a **Featured** badge. Pull requests can only change `scripts/`, so the check fails on any that touch it; just ask.
 
 ```json
 { "featured": ["firefly"] }

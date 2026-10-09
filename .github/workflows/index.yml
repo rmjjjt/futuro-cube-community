@@ -2,7 +2,6 @@ name: Check scripts and rebuild the index
 
 on:
   pull_request:
-    paths: ["scripts/**"]
   push:
     branches: [main]
     paths: ["scripts/**", "tools/**", "featured.json"]
@@ -17,6 +16,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: Only scripts/ may change (the maintainer edits everything else on main)
+        if: github.event.pull_request.user.login != github.repository_owner
+        run: |
+          bad=$(git diff --name-only ${{ github.event.pull_request.base.sha }} HEAD | grep -v '^scripts/' || true)
+          if [ -n "$bad" ]; then
+            echo "::error::Pull requests can only add or change files in scripts/. Please remove: $bad"
+            exit 1
+          fi
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
       - name: Compile and run every script in the simulator
