@@ -5,7 +5,7 @@ on:
     paths: ["scripts/**"]
   push:
     branches: [main]
-    paths: ["scripts/**", "tools/**"]
+    paths: ["scripts/**", "tools/**", "featured.json"]
   workflow_dispatch:
 
 permissions:

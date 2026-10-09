@@ -35,6 +35,15 @@ Or open a pull request yourself that adds one file, `scripts/<name>.p`.
 
 By sharing, you agree to license your script under the MIT licence (see [LICENSE](LICENSE)).
 
+## Featured
+
+`featured.json` lists the maintainer's picks, in order. They show first in the gallery
+with a **Featured** badge. Pull requests that change it won't be merged; just ask.
+
+```json
+{ "featured": ["firefly"] }
+```
+
 ## How it works
 
 `tools/build_index.mjs` compiles every script with the Suite's Pawn compiler, runs each one

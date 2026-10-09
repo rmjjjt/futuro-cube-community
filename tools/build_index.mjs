@@ -87,6 +87,14 @@ for (const file of files) {
   previews[name] = p.frames;
   console.log(`ok  ${file} (${res.amx.length} bytes)`);
 }
+// featured.json: names the maintainer picks to show first, in that order
+let featured = [];
+try { featured = JSON.parse(fs.readFileSync(path.join(root, "featured.json"), "utf8")).featured ?? []; }
+catch (e) { if (e.code !== "ENOENT") problems.push(`featured.json: ${e.message}`); }
+for (const f of featured) if (!scripts.some((s) => s.name === f)) console.warn(`warn featured.json names "${f}", which isn't in scripts/`);
+for (const s of scripts) if (featured.includes(s.name)) s.featured = true;
+const rank = (s) => (s.featured ? featured.indexOf(s.name) : featured.length);
+scripts.sort((a, b) => rank(a) - rank(b) || a.name.localeCompare(b.name));
 for (const p of problems) console.error(`ERR ${p}`);
 if (!check) {
   fs.writeFileSync(path.join(root, "index.json"), JSON.stringify({ scripts }, null, 1) + "\n");
